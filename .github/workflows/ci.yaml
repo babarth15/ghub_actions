@@ -6,4 +6,5 @@ jobs:
     steps:
       - name: hello
       - run: |
-          echo "hello worl"
+          echo "hello world"
+
