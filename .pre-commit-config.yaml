@@ -1,0 +1,80 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+    - id: trailing-whitespace
+    - id: mixed-line-ending
+    - id: check-added-large-files
+      args: ['--maxkb=3000']
+    - id: end-of-file-fixer
+    - id: requirements-txt-fixer
+    - id: check-yaml
+    - id: check-json
+    - id: pretty-format-json
+      args: ['--autofix']
+    - id: check-merge-conflict
+    - id: check-case-conflict
+    - id: check-docstring-first
+
+- repo: local
+  hooks:
+  - id: isort
+    name: isort
+    stages: [commit]
+    language: system
+    entry: isort
+    types: [python]
+    args: ["--profile", "black"]
+
+  - id: black
+    name: black
+    stages: [commit]
+    language: system
+    entry: black
+    types: [python]
+    args:  # arguments to configure black
+      - --line-length=88
+      - --include='\.pyi?$'
+
+  - id: pylint
+    name: pylint
+    stages: [commit]
+    language: system
+    entry: pylint
+    types: [python]
+    args: [--disable=all, --enable=unused-import]
+
+  - id: mypy
+    name: mypy
+    stages: [commit]
+    language: system
+    entry: mypy carina
+    types: [python]
+    pass_filenames: false
+
+  - id: flake8
+    name: flake8
+    stages: [commit]
+    language: system
+    entry: flake8
+    types: [python]
+    exclude: setup.py
+    args: [--max-line-length=88, "--ignore=E203,E266,E501,W503,F821"]
+
+  - id: pytest
+    name: pytest
+    entry: run_tests.sh
+    language: script
+    pass_filenames: false
+    always_run: true
+    
+ci:
+  autofix_commit_msg: |
+      [pre-commit.ci] auto fixes from pre-commit.com hooks
+      for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
